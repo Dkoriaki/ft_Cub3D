@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dkoriaki <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: dkoriaki <dkoriaki@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/07 11:38:54 by dkoriaki          #+#    #+#              #
-#    Updated: 2019/11/21 14:39:30 by dkoriaki         ###   ########.fr        #
+#    Updated: 2020/11/08 14:04:29 by dkoriaki         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ OBJS	= ${SRCS:.c=.o}
 
 OBJS_B	= ${SRCS_B:.c=.o}
 
-CC	= gcc
+CC	= clang
 
 CFLAGS	= -Wall -Wextra -Werror
 
