@@ -1,109 +1,180 @@
 #include "cub3d.h"
-#include <stdio.h>
-
-typedef struct  s_player {
-    int     x;
-    int     y;
-}               t_player;
-
-typedef struct  s_data {
-    void    *mlx;
-    void    *win;
-    void    *img;
-    char    *addr;
-    int     bits_per_pixel;
-    int     line_length;
-    int     endian;
-    t_player    player;
-}               t_data;
 
 
-
-void            my_mlx_pixel_put(t_data *data, int x, int y, int color)
+void            found_horizontal_cross(t_data *data)
 {
-    char    *dst;
-
-    dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-    *(unsigned int*)dst = color;
-}
-
-
-int             destroy_win(t_data *vars)
-{
-        mlx_destroy_window(vars->mlx, vars->win);
-        exit(0);
-        return (0);
-}
-
-int             draw_player(t_data *data)
-{
-    my_mlx_pixel_put(data, data->player.x, data->player.y, 0xFF0000);
-    return (0);
-}
-
-int             draw_map(t_data *img)
-{
-    int     x = 0;
-    int     y = 0;
-    int     draw_x;
-    int     draw_y;
-    int map[64] =
+    /*int map[map_y][map_x] =
     {
-        1, 1, 1, 0, 1, 1, 1, 1,
-        1, 0, 1, 0, 0, 0, 0, 1,
-        1, 0, 1, 0, 0, 0, 0, 1,
-        1, 0, 1, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 1, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 1,
-        1, 1, 1, 1, 1, 1, 1, 1,
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 0, 0, 1, 0, 0, 0, 1},
+        {0, 0, 0, 1, 0, 0, 0, 1},
+        {0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+    };*/
+
+    double  angle = FOV * (PI/180); // pour travailer avec des angles normaux, IL FAUDRA LE CHANGER
+
+    if (angle > 0 && angle < PI)    // the ray looking up
+    {
+        data->h_cross.dy = -SCALE;
+        data->h_cross.y = floor(data->player.y/SCALE) * SCALE - 0.001;
+        data->h_cross.dx = SCALE/tan(angle);
+        data->h_cross.x = data->player.x + (data->player.y - data->h_cross.y)/tan(angle);
+    }
+    else                        // the ray looking down
+    {
+        data->h_cross.dy = SCALE;
+        data->h_cross.y = floor(data->player.y/SCALE) * SCALE + SCALE;
+        data->h_cross.dx = SCALE/tan(angle);
+        data->h_cross.x = data->player.x + (data->player.y - data->h_cross.y)/tan(angle);
+    }
+    
+    /*double  alpha = 60 * (PI/180);
+    double  Ya = -SCALE;
+    double  Xa = floor(64/tan(alpha));
+
+    data->cross.hy = floor(data->player.y/64) * 64 - 0.0001;                         //position y du croisement
+    data->cross.hx = data->player.x + (data->player.y - data->cross.hy)/tan(alpha); //position x du croisement
+    pos_y = data->cross.hy/SCALE;    //Ordonnee de la case
+    pos_x = h_dist.x/SCALE;    //Abscisse de la case 
+    while (map[pos_y][pos_x] != 1)  //On cherche la case ou il y a un mur
+    {
+       h_dist.x += Xa;        //incrementation d'ordonnee en ordonnee
+       h_dist.y += Ya;
+       pos_y = h_dist.y/64;      //changement de case
+       pos_x = h_dist.x/64;
+    }
+    h_dist.dist = sqrt((data->player.x - h_dist.x) * (data->player.x - h_dist.x) + (data->player.y - h_dist.y) * (data->player.y - h_dist.y));*/
+}
+
+void             found_vertical_cross(t_data *data)
+{
+    /*int map[map_y][map_x] =
+    {
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 0, 0, 1, 0, 0, 0, 1},
+        {0, 0, 0, 1, 0, 0, 0, 1},
+        {0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+    };*/
+
+    double  angle = FOV * (PI/180); // pour travailer avec des angles normaux, IL FAUDRA LE CHANGER
+
+    if (angle > M_PI_2 && angle < 3 * M_PI_2)    // the ray looking left
+    {
+        data->v_cross.dx = -SCALE;
+        data->v_cross.x = floor(data->player.x/SCALE) * SCALE - 0.001;
+        data->v_cross.dy = SCALE*tan(angle);
+        data->v_cross.y = data->player.y + (data->player.x - data->v_cross.x)*tan(angle);
+    }
+    else                        // the ray looking right
+    {
+        data->v_cross.dx = SCALE;
+        data->v_cross.x = floor(data->player.x/SCALE) * SCALE + SCALE;
+        data->v_cross.dy = -SCALE * tan(angle);
+        data->v_cross.y = data->player.y + (data->player.x - data->v_cross.x)*tan(angle);
+        
+    }
+    
+    /*
+    t_dist  v_dist;
+    int     pos_x;
+    int     pos_y;
+    double  alpha = 60 * (PI/180);
+    double  Ya = floor(64/tan(alpha));
+    double  Xa = 64;
+
+    v_dist.x = floor(data->player.x/64) * 64 + 64;
+    v_dist.y = data->player.y + (data->player.x - v_dist.x) * tan(alpha);
+    pos_x = v_dist.x/64;
+    pos_y = v_dist.y/64;
+
+    while (map[pos_y][pos_x] != 1)  //On cherche la case ou il y a un mur
+    {
+       v_dist.x += Xa;        //incrementation d'ordonnee en ordonnee
+       v_dist.y += Ya;
+       pos_y = v_dist.y/64;      //changement de case
+       pos_x = v_dist.x/64;
+    }
+    v_dist.dist = sqrt((data->player.x - v_dist.x) * (data->player.x - v_dist.x) + (data->player.y - v_dist.y) * (data->player.y - v_dist.y));
+    return(v_dist);*/
+}
+
+t_cross            found_cross(t_data *data)
+{
+    int map[map_y][map_x] =
+    {
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 0, 0, 1, 0, 0, 0, 1},
+        {0, 0, 0, 1, 0, 0, 0, 1},
+        {0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 1, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
     };
-    int     map_x = 8;
-    int     map_y = 8;
+    t_cross     cross;
 
-    //img->img = mlx_new_image(img->mlx, 600, 600);
-    //img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length,
-    //                             &img->endian);
-    while (y < map_y)
+
+    found_horizontal_cross(data);
+    while (map[(int)(data->h_cross.y/SCALE)][(int)(data->h_cross.x/SCALE)] != 1)
     {
-        x = 0;
-        while (x < map_x)
-        {
-            if (map[y * map_x + x] == 1)
-            {
-                draw_x = 0;
-                while (draw_x++ < 49)
-                {
-                    draw_y = 0;
-                    while (draw_y++ < 49)
-                        my_mlx_pixel_put(img, draw_x + (x*50), draw_y + (y*50), 0xFFFFFF);
-                }
-            }
-            x++;
-        }
-        y++;
+        data->h_cross.x += data->h_cross.dx;
+        data->h_cross.y += data->h_cross.dy;
     }
-    draw_player(img);
+    data->h_cross.dist = dist_btw_points(data->player.x, data->player.y, data->h_cross.x, data->h_cross.y);
+    found_vertical_cross(data);
+    //printf("v_y = %lf\nv_x = %lf\n", data->v_cross.y, data->v_cross.x);
+    while (map[(int)data->v_cross.y/SCALE][(int)data->v_cross.x/SCALE] != 1)
+    {
+        data->v_cross.x += data->v_cross.dx;
+        data->v_cross.y += data->v_cross.dy;
+    }
+    data->v_cross.dist = dist_btw_points(data->player.x, data->player.y, data->v_cross.x, data->v_cross.y);
+    cross = (data->h_cross.dist < data->v_cross.dist) ? data->h_cross : data->v_cross;
+    return(cross);
+}
+
+int             draw_ray(t_data *data)
+{
+    double     dx;
+    double     dy;
+    double     steps;
+    double     Xinc;
+    double     Yinc;
+    double     x;
+    double     y;
+    t_cross    cross;
+
+    /*while ()
+    found_horizontal_cross(data);
+    found_vertical_cross(data);
+    data->cross = (H_dist.dist < V_dist.dist)? H_dist : V_dist;
+    dx = data->wall.x - data->player.x;
+    dy = data->wall.y - data->player.y;*/
+    cross = found_cross(data);
+    dx = cross.x - data->player.x;
+    dy = cross.y - data->player.y;
+    steps = (fabs(dx) > fabs(dy))? fabs(dx) : fabs(dy);
+    Xinc = dx / steps;
+    Yinc = dy / steps;
+    x = data->player.x;
+    y = data->player.y;
+    for (int i = 0; i <= steps; i++)
+    {
+        my_mlx_pixel_put(data, x, y, 0xFF0000);
+        x += Xinc;
+        y += Yinc;
+    }
     return (0);
 }
 
-/*int             clause(int keycode, t_data *vars)
-{
-    //mlx_clear_window(vars->mlx, vars->win);
-    printf("keycode = %d\n", keycode);
-    if (keycode == ESC)
-    {
-        mlx_destroy_window(vars->mlx, vars->win);
-        exit(0);
-    }
-    if (keycode == W)
-    {
-        vars->player.y += 1;
-    }    
-    draw_map(vars);
-    return (1);
-}
-*/
 int             control_player(int keycode, t_data *data)
 {
     if (keycode == ESC)
@@ -119,23 +190,22 @@ int             control_player(int keycode, t_data *data)
         data->player.x -= 1;
     if (keycode == D)
         data->player.x += 1;
-    printf("player.x = %d\nplayer.y= %d\n", data->player.x, data->player.y);
     return (0);
 }
 
 int             ft_next_frame(t_data *data)
 {
+    
+
     data->img = mlx_new_image(data->mlx, 600, 600);
     data->addr = mlx_get_data_addr(data->img, &data->bits_per_pixel, &data->line_length,
                                  &data->endian);
     draw_map(data);
+    draw_ray(data);
     mlx_put_image_to_window(data->mlx, data->win, data->img, 0, 0);
     mlx_destroy_image(data->mlx, data->img);
-    //printf("ouistiti %d\n", data->player.x);
-    return(0);
+    return(1);
 }
-
-
 
 int             main(void)
 {
@@ -148,14 +218,7 @@ int             main(void)
 
     img.mlx = mlx_init();
     img.win = mlx_new_window(img.mlx, 600, 600, "Hello world!");
-    //img.img = mlx_new_image(img.mlx, 600, 600);
-    //img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
-    //                             &img.endian);
-    //draw_map(&img);
-    //mlx_put_image_to_window(img.mlx, img.win, img.img, 0, 0);
-
-
-    mlx_hook(img.win, 2, 1L<<0, control_player, &img);
+    mlx_hook(img.win, 2, 1L<<0, &control_player, &img);
     mlx_hook(img.win, 17, 1L<<17, destroy_win, &img);
     mlx_loop_hook(img.mlx, ft_next_frame, &img);
     mlx_loop(img.mlx);

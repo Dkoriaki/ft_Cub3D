@@ -6,7 +6,7 @@
 #    By: dkoriaki <dkoriaki@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 16:26:48 by dkoriaki          #+#    #+#              #
-#    Updated: 2020/10/28 14:35:43 by dkoriaki         ###   ########.fr        #
+#    Updated: 2020/11/09 16:30:32 by dkoriaki         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,8 @@ LIBFT		=	$(LIBFT_DIR)/libft.a
 MLX_DIR	=	./minilibx-linux/
 MLX			=	$(MLX_DIR)/libmlx.a
 
-SRCS	=	./srcs/main.c
+SRCS	=	./srcs/main.c \
+			./srcs/ft_utils.c
 
 OBJS	=	$(SRCS:.c=.o)
 
@@ -60,5 +61,8 @@ fclean:	clean
 				rm -f *.bmp
 
 re:	fclean all
+
+run: all
+			./Cub3D
 
 .PHONY:	all clean fclean re
