@@ -6,7 +6,7 @@
 /*   By: dkoriaki <dkoriaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 14:20:21 by dkoriaki          #+#    #+#             */
-/*   Updated: 2020/11/19 13:55:47 by dkoriaki         ###   ########.fr       */
+/*   Updated: 2020/11/19 17:54:50 by dkoriaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 # define map_y 8
 # define map_x 8
 # define SCALE 64
-# define FOV 180
+# define FOV 0
 
 typedef struct  s_player {
     int     x;
@@ -61,6 +61,7 @@ typedef struct  s_data {
     t_cross     v_cross;
     t_cross     h_cross;
     t_cross     cross;
+    int         test;
 }               t_data;
 
 

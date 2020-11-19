@@ -81,6 +81,9 @@ void             found_vertical_cross(t_data *data)
         data->v_cross.y = data->player.y + (data->player.x - data->v_cross.x)*tan(data->player.fov);
         
     }
+    data->test += 1;
+    printf("%d\n", data->test);
+
     
     /*
     t_dist  v_dist;
@@ -122,6 +125,10 @@ void            found_cross(t_data *data)
     //t_cross     cross;
 
 
+    if (data->player.fov < 0)
+        data->player.fov += (2 * M_PI);
+    if (data->player.fov > (2 * M_PI))
+        data->player.fov = 0;
     found_horizontal_cross(data);
     while (is_in_map(data->h_cross) && map[(int)(data->h_cross.y/SCALE)][(int)(data->h_cross.x/SCALE)] != 1)
     {
@@ -135,11 +142,13 @@ void            found_cross(t_data *data)
     {
         data->v_cross.x += data->v_cross.dx;
         data->v_cross.y += data->v_cross.dy;
-        //printf("cross_x = %lf\ncross_y = %lf\n", data->v_cross.x, data->v_cross.y);
-        printf("fov = %lf\n", data->player.fov);
+        //printf("v_cross.dy = %lf\nv_cross.dx = %lf\n", data->v_cross.dy, data->v_cross.dx);
+        //printf("cross_x = %d\ncross_y = %d\n", (int)(data->v_cross.x/SCALE), (int)(data->v_cross.y/SCALE));
+        //printf("fov = %lf\n", data->player.fov);
     }
     data->v_cross.dist = dist_btw_points(data->player.x, data->player.y, data->v_cross.x, data->v_cross.y);
     data->cross = (data->h_cross.dist < data->v_cross.dist) ? data->h_cross : data->v_cross;
+    printf("fov = %lf\n", data->player.fov);
     //return(cross);
 }
 
@@ -184,17 +193,17 @@ int             control_player(int keycode, t_data *data)
         exit(0);
     }
     if (keycode == W)
-        data->player.y -= 1;
+        data->player.y -= 5;
     if (keycode == S)
-        data->player.y += 1;
+        data->player.y += 5;
     if (keycode == A)
-        data->player.x -= 1;
+        data->player.x -= 5;
     if (keycode == D)
-        data->player.x += 1;
+        data->player.x += 5;
     if (keycode == RIGHT)
-        data->player.fov -= 0.05;
+        data->player.fov -= 0.15;
     if (keycode == LEFT)
-        data->player.fov += 0.05;
+        data->player.fov += 0.15;
     //data->player.fov = correct_angle(data->player.fov);
     found_cross(data);
     return (0);
@@ -219,6 +228,7 @@ int             main(void)
     img.player.x = 100;
     img.player.y = 100;
     img.player.fov = FOV * (PI/180);
+    img.test = 0;
 
     
 

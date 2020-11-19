@@ -6,7 +6,7 @@
 /*   By: dkoriaki <dkoriaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/08 14:20:30 by dkoriaki          #+#    #+#             */
-/*   Updated: 2020/11/19 13:55:29 by dkoriaki         ###   ########.fr       */
+/*   Updated: 2020/11/19 17:54:48 by dkoriaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ double          correct_angle(double angle)
 
 int             is_in_map(t_cross cross)
 {
-    if (cross.x > 0 && cross.x < 600 && cross.y > 0 && cross.y < 600)
+    if (cross.x > 0 && cross.x < 512 && cross.y > 0 && cross.y < 512)
         return (1);
     return(0);
 }
