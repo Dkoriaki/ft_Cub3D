@@ -6,7 +6,7 @@
 /*   By: dkoriaki <dkoriaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 14:20:21 by dkoriaki          #+#    #+#             */
-/*   Updated: 2020/11/18 20:05:45 by dkoriaki         ###   ########.fr       */
+/*   Updated: 2020/11/19 13:55:47 by dkoriaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,12 @@
 # define map_y 8
 # define map_x 8
 # define SCALE 64
-# define FOV 60
+# define FOV 180
 
 typedef struct  s_player {
     int     x;
     int     y;
+    double  fov;
 }               t_player;
 
 typedef struct  s_cross {
@@ -59,6 +60,7 @@ typedef struct  s_data {
     t_player    player;
     t_cross     v_cross;
     t_cross     h_cross;
+    t_cross     cross;
 }               t_data;
 
 
@@ -68,6 +70,7 @@ int             destroy_win(t_data *vars);
 int             draw_player(t_data *data);
 int             draw_map(t_data *img);
 double          dist_btw_points(double x0, double y0, double x1, double y1);
-
+int             is_in_map(t_cross cross);
+double          correct_angle(double angle);
 
 #endif

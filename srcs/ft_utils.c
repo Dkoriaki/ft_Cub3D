@@ -6,11 +6,25 @@
 /*   By: dkoriaki <dkoriaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/08 14:20:30 by dkoriaki          #+#    #+#             */
-/*   Updated: 2020/11/13 14:45:36 by dkoriaki         ###   ########.fr       */
+/*   Updated: 2020/11/19 13:55:29 by dkoriaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+double          correct_angle(double angle)
+{
+    if (angle < 0)
+        angle += (2 * PI);
+    return (angle);
+}
+
+int             is_in_map(t_cross cross)
+{
+    if (cross.x > 0 && cross.x < 600 && cross.y > 0 && cross.y < 600)
+        return (1);
+    return(0);
+}
 
 double          dist_btw_points(double x0, double y0, double x1, double y1)
 {
@@ -47,9 +61,9 @@ int             draw_map(t_data *img)
     int map[map_y][map_x] =
     {
         {1, 1, 1, 1, 1, 1, 1, 1},
-        {0, 0, 0, 1, 0, 0, 0, 1},
-        {0, 0, 0, 1, 0, 0, 0, 1},
-        {0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 1, 0, 0, 0, 1},
+        {1, 0, 0, 1, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 1, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 1},

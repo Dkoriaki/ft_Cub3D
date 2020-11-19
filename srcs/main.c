@@ -15,21 +15,21 @@ void            found_horizontal_cross(t_data *data)
         {1, 1, 1, 1, 1, 1, 1, 1},
     };*/
 
-    double  angle = FOV * (PI/180); // pour travailer avec des angles normaux, IL FAUDRA LE CHANGER
+    //double  angle = FOV * (PI/180); // pour travailer avec des angles normaux, IL FAUDRA LE CHANGER
 
-    if (angle > 0 && angle < PI)    // the ray looking up
+    if (data->player.fov > 0 && data->player.fov < PI)    // the ray looking up
     {
         data->h_cross.dy = -SCALE;
         data->h_cross.y = floor(data->player.y/SCALE) * SCALE - 0.001;
-        data->h_cross.dx = SCALE/tan(angle);
-        data->h_cross.x = data->player.x + (data->player.y - data->h_cross.y)/tan(angle);
+        data->h_cross.dx = SCALE/tan(data->player.fov);
+        data->h_cross.x = data->player.x + (data->player.y - data->h_cross.y)/tan(data->player.fov);
     }
     else                        // the ray looking down
     {
         data->h_cross.dy = SCALE;
         data->h_cross.y = floor(data->player.y/SCALE) * SCALE + SCALE;
-        data->h_cross.dx = SCALE/tan(angle);
-        data->h_cross.x = data->player.x + (data->player.y - data->h_cross.y)/tan(angle);
+        data->h_cross.dx = -SCALE/tan(data->player.fov);
+        data->h_cross.x = data->player.x + (data->player.y - data->h_cross.y)/tan(data->player.fov);
     }
     
     /*double  alpha = 60 * (PI/180);
@@ -64,21 +64,21 @@ void             found_vertical_cross(t_data *data)
         {1, 1, 1, 1, 1, 1, 1, 1},
     };*/
 
-    double  angle = FOV * (PI/180); // pour travailer avec des angles normaux, IL FAUDRA LE CHANGER
+    //double  angle = FOV * (PI/180); // pour travailer avec des angles normaux, IL FAUDRA LE CHANGER
 
-    if (angle > M_PI_2 && angle < 3 * M_PI_2)    // the ray looking left
+    if (data->player.fov > M_PI_2 && data->player.fov < 3 * M_PI_2)    // the ray looking left
     {
         data->v_cross.dx = -SCALE;
         data->v_cross.x = floor(data->player.x/SCALE) * SCALE - 0.001;
-        data->v_cross.dy = SCALE*tan(angle);
-        data->v_cross.y = data->player.y + (data->player.x - data->v_cross.x)*tan(angle);
+        data->v_cross.dy = SCALE*tan(data->player.fov);
+        data->v_cross.y = data->player.y + (data->player.x - data->v_cross.x)*tan(data->player.fov);
     }
     else                        // the ray looking right
     {
         data->v_cross.dx = SCALE;
         data->v_cross.x = floor(data->player.x/SCALE) * SCALE + SCALE;
-        data->v_cross.dy = -SCALE * tan(angle);
-        data->v_cross.y = data->player.y + (data->player.x - data->v_cross.x)*tan(angle);
+        data->v_cross.dy = -SCALE * tan(data->player.fov);
+        data->v_cross.y = data->player.y + (data->player.x - data->v_cross.x)*tan(data->player.fov);
         
     }
     
@@ -106,24 +106,24 @@ void             found_vertical_cross(t_data *data)
     return(v_dist);*/
 }
 
-t_cross            found_cross(t_data *data)
+void            found_cross(t_data *data)
 {
     int map[map_y][map_x] =
     {
         {1, 1, 1, 1, 1, 1, 1, 1},
-        {0, 0, 0, 1, 0, 0, 0, 1},
-        {0, 0, 0, 1, 0, 0, 0, 1},
-        {0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 1, 0, 0, 0, 1},
+        {1, 0, 0, 1, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 1, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 1},
         {1, 1, 1, 1, 1, 1, 1, 1},
     };
-    t_cross     cross;
+    //t_cross     cross;
 
 
     found_horizontal_cross(data);
-    while (map[(int)(data->h_cross.y/SCALE)][(int)(data->h_cross.x/SCALE)] != 1)
+    while (is_in_map(data->h_cross) && map[(int)(data->h_cross.y/SCALE)][(int)(data->h_cross.x/SCALE)] != 1)
     {
         data->h_cross.x += data->h_cross.dx;
         data->h_cross.y += data->h_cross.dy;
@@ -131,14 +131,16 @@ t_cross            found_cross(t_data *data)
     data->h_cross.dist = dist_btw_points(data->player.x, data->player.y, data->h_cross.x, data->h_cross.y);
     found_vertical_cross(data);
     //printf("v_y = %lf\nv_x = %lf\n", data->v_cross.y, data->v_cross.x);
-    while (map[(int)data->v_cross.y/SCALE][(int)data->v_cross.x/SCALE] != 1)
+    while (is_in_map(data->v_cross) && map[(int)data->v_cross.y/SCALE][(int)data->v_cross.x/SCALE] != 1)
     {
         data->v_cross.x += data->v_cross.dx;
         data->v_cross.y += data->v_cross.dy;
+        //printf("cross_x = %lf\ncross_y = %lf\n", data->v_cross.x, data->v_cross.y);
+        printf("fov = %lf\n", data->player.fov);
     }
     data->v_cross.dist = dist_btw_points(data->player.x, data->player.y, data->v_cross.x, data->v_cross.y);
-    cross = (data->h_cross.dist < data->v_cross.dist) ? data->h_cross : data->v_cross;
-    return(cross);
+    data->cross = (data->h_cross.dist < data->v_cross.dist) ? data->h_cross : data->v_cross;
+    //return(cross);
 }
 
 int             draw_ray(t_data *data)
@@ -150,7 +152,6 @@ int             draw_ray(t_data *data)
     double     Yinc;
     double     x;
     double     y;
-    t_cross    cross;
 
     /*while ()
     found_horizontal_cross(data);
@@ -158,9 +159,9 @@ int             draw_ray(t_data *data)
     data->cross = (H_dist.dist < V_dist.dist)? H_dist : V_dist;
     dx = data->wall.x - data->player.x;
     dy = data->wall.y - data->player.y;*/
-    cross = found_cross(data);
-    dx = cross.x - data->player.x;
-    dy = cross.y - data->player.y;
+    //cross = found_cross(data);
+    dx = data->cross.x - data->player.x;
+    dy = data->cross.y - data->player.y;
     steps = (fabs(dx) > fabs(dy))? fabs(dx) : fabs(dy);
     Xinc = dx / steps;
     Yinc = dy / steps;
@@ -190,13 +191,17 @@ int             control_player(int keycode, t_data *data)
         data->player.x -= 1;
     if (keycode == D)
         data->player.x += 1;
+    if (keycode == RIGHT)
+        data->player.fov -= 0.05;
+    if (keycode == LEFT)
+        data->player.fov += 0.05;
+    //data->player.fov = correct_angle(data->player.fov);
+    found_cross(data);
     return (0);
 }
 
 int             ft_next_frame(t_data *data)
 {
-    
-
     data->img = mlx_new_image(data->mlx, 600, 600);
     data->addr = mlx_get_data_addr(data->img, &data->bits_per_pixel, &data->line_length,
                                  &data->endian);
@@ -213,6 +218,7 @@ int             main(void)
 
     img.player.x = 100;
     img.player.y = 100;
+    img.player.fov = FOV * (PI/180);
 
     
 
